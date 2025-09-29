@@ -1,29 +1,23 @@
 
 targetScope = 'resourceGroup'
 
-@description('Environment name')
-param env string
+param kvName string
+param location string
 
-@description('Azure region')
-param region string
-
-@description('Region short code')
-param regionShort string
-
-resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
-	name: 'kv-${env}-${regionShort}'
-	location: region
+resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
+	name: kvName
+	location: location
 	properties: {
+		enableRbacAuthorization: true
 		sku: {
-			family: 'A'
 			name: 'standard'
+			family: 'A'
 		}
 		tenantId: subscription().tenantId
-		enableRbacAuthorization: true
 	}
 }
 
-output kvName string = kv.name
+output name string = kv.name
 param env string
 param region string
 param regionShort string
