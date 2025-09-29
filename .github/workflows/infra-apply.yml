@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Azure Login (OIDC)
         uses: azure/login@v1
@@ -26,6 +26,7 @@ jobs:
       - name: Deploy Bicep
         run: |
           az deployment sub create \
+            --name deploy-${{ github.run_number }} \
             --location eastus \
             --template-file bicep/main.bicep \
             --parameters @bicep/parameters/dev.json
