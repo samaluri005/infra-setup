@@ -2,11 +2,14 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "rgName": {
-      "value": "rg-dev-infra"
+    "env": {
+      "value": "dev"
     },
-    "location": {
+    "region": {
       "value": "eastus"
+    },
+    "regionShort": {
+      "value": "eus"
     }
   }
 }
