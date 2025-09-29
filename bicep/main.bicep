@@ -1,42 +1,43 @@
 targetScope = 'subscription'
 
-@description('Name of the Resource Group')
-param rgName string = 'rg-dev-infra'
+@description('Environment name, e.g. dev, sit, prod')
+param env string
 
-@description('Location for all resources')
-param location string = 'eastus'
+@description('Azure region for resources')
+param region string = 'eastus'
 
-//
-// Create Resource Group
-//
-module rg './modules/resource-group.bicep' = {
-	name: 'rg-deploy'
+@description('Short name for region')
+param regionShort string = 'eus'
+
+// ===== Resource Group =====
+module rg 'modules/resource-group.bicep' = {
+	name: 'rg-${env}-${regionShort}'
+	scope: subscription()
 	params: {
-		rgName: rgName
-		location: location
+		env: env
+		region: region
+		regionShort: regionShort
 	}
 }
 
-//
-// Deploy Key Vault
-//
-module kv './modules/keyvault.bicep' = {
-	name: 'kv-deploy'
-	scope: resourceGroup(rgName)
+// ===== Key Vault =====
+module kv 'modules/keyvault.bicep' = {
+	name: 'kv-${env}-${regionShort}'
+	scope: resourceGroup(rg.outputs.rgName)
 	params: {
-		kvName: 'kv-dev-${uniqueString(rgName)}'
-		location: location
+		env: env
+		region: region
+		regionShort: regionShort
 	}
 }
 
-//
-// Deploy Managed Identity
-//
-module mi './modules/identity.bicep' = {
-	name: 'mi-deploy'
-	scope: resourceGroup(rgName)
+// ===== Managed Identity =====
+module identity 'modules/identity.bicep' = {
+	name: 'mi-${env}-${regionShort}'
+	scope: resourceGroup(rg.outputs.rgName)
 	params: {
-		identityName: 'mi-dev-infra'
-		location: location
+		env: env
+		region: region
+		regionShort: regionShort
 	}
 }
